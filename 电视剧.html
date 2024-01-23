@@ -1,0 +1,189 @@
+<!--
+本页面使用bootstrap搭建，官方文档：https://getbootstrap.com/docs/5.3/components/tooltips/
+
+腾讯视频连接获取：
+脚本一：
+随便一个播放页面执行
+var videos = [];
+document.querySelectorAll('div.result_episode_list > div.item a').forEach(i => {
+    videos.push({label: i.innerText, link: i.href});
+});
+console.log(videos)
+
+脚本二：
+随便一个播放页面执行
+var videos = [];
+document.querySelectorAll('div.page-content__right div.playlist-list div.playlist-item-rect').forEach(i => {
+    var titleEle = i.querySelector('div.playlist-item-rect__tip')
+    if (!titleEle) {
+        return
+    }
+    var firstEle = i.querySelector('div:first-child')
+    var vid = firstEle.getAttribute('data-vid');
+    var cid = firstEle.getAttribute('data-cid');
+    var num = firstEle.querySelector('span').innerText;
+    var title = titleEle.innerText.trim();
+    videos.push({label: num, title: title, link: `https://v.qq.com/x/cover/${cid}/${vid}.html`});
+})
+JSON.stringify(videos)
+console.log(videos)
+
+爱奇艺视频连接获取：
+搜索页面执行
+参数说明：
+list[0] 搜索的剧集出现在列表的位置，从0开始
+window.__NUXT__.data[1].cardData.list[0].videoinfos.map(v => ({label: v.order, link: 'https:' + v.url}))
+-->
+<html lang="zh-CN" class="at-mac at-mac-new at-unknown at-unstyle-large at-landscape at-outapp">
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+	<meta name="renderer" content="webkit">
+	<meta charset="UTF-8">
+	<title>追剧</title>
+	<link href="bootstrap.min.css" rel="stylesheet">
+	<script src="bootstrap.bundle.min.js"></script>
+	<style>
+		.playlist {
+			display: flex;
+			flex-wrap: wrap;
+/*			justify-content: center;*/
+		}
+		.playlist-item {
+			padding: 8px;
+		}
+		.playlist-item > a {
+			width: 50px;
+			height: 50px;
+			line-height: 2.3;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<div class="row gy-4">
+			<div class="col-24">
+				<div class="form-floating">
+					<select class="form-select" id="floatingSelect" onchange="selectChange();" aria-label="Floating label select example">
+						<option value="https://jx.playerjy.com/?url=">playerjy</option>
+						<option selected value="https://jx.jsonplayer.com/player/?url=">jsonplayer</option>
+					</select>
+					<label for="floatingSelect">线路</label>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+function initTooltips() {
+	const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+	const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+}
+function getXianlu() {
+	return document.getElementById("floatingSelect").value || '';
+}
+let currentXianlu = getXianlu();
+
+const selectChange = function() {
+	const xianlu = getXianlu();
+	document.querySelectorAll('div.playlist a').forEach(i => {
+		i.href = i.href.replace(currentXianlu, xianlu)
+	});
+	currentXianlu = xianlu;
+}
+
+function playListRender(title, playList) {
+	// const id = Date.now();
+	const xianlu = getXianlu();
+	return `<div class="col-24">
+				<p>
+					<a class="btn btn-primary" data-bs-toggle="collapse" href="#collapse-${title}" role="button" aria-expanded="false" aria-controls="collapse-${title}">
+						${title}
+					</a>
+				</p>
+				<div class="collapse" id="collapse-${title}">
+					<div class="card card-body">
+						<div class="playlist">
+						${playList.reduce((pre, cur) => (pre += `<div class="playlist-item"><a class="btn btn-light" ${
+							cur.title ? `data-bs-toggle="tooltip" data-bs-title="${cur.title}"` : ""
+						} href="${xianlu + cur.link}" target="_blank">${cur.label}</a></div>`), '')}
+						</div>
+					</div>
+				</div>
+			</div>`;
+}
+
+function appendPlayList(title, videos) {
+	var rowDom = document.querySelector('div.container div.row');
+	rowDom.insertAdjacentHTML('beforeend', playListRender(title, videos));
+}
+
+// 雪中悍刀行
+var xuezhonghandaoxing = [
+	{ label: '1', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/r00418ld4f2.html' },
+	{ label: '2', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/t00419t0zae.html' },
+	{ label: '3', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/z0041zew61e.html' },
+	{ label: '4', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/z0041xhufbs.html' },
+	{ label: '5', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/v0041eyn0vj.html' },
+	{ label: '6', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/c0041h9gzv9.html' },
+	{ label: '7', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/q00412wrinh.html' },
+	{ label: '8', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/n0041t0lt9p.html' },
+	{ label: '9', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/i0041c66omr.html' },
+	{ label: '10', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/z0041spvzt7.html' },
+	{ label: '11', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/u0041l2pyer.html' },
+	{ label: '12', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/j00416l5taj.html' },
+	{ label: '13', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/x0041wg8yjd.html' },
+	{ label: '14', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/b0041j7pdc9.html' },
+	{ label: '15', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/o0041mwmo05.html' },
+	{ label: '16', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/n0041wsj7k3.html' },
+	{ label: '17', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/c00415bgix9.html' },
+	{ label: '18', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/w0041iug6fz.html' },
+	{ label: '19', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/w0041ypec6h.html' },
+	{ label: '20', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/p00412bicgs.html' },
+	{ label: '21', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/z00414w6dow.html' },
+	{ label: '22', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/l0041002gi9.html' },
+	{ label: '23', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/c0041lycl9c.html' },
+	{ label: '24', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/s0041lrgi3f.html' },
+	{ label: '25', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/x0041iinn2t.html' },
+	{ label: '26', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/m00412idbzj.html' },
+	{ label: '27', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/m00415ciu67.html' },
+	{ label: '28', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/d0041t16j8c.html' },
+	{ label: '29', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/a0041ls8quy.html' },
+	{ label: '30', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/g0041aii4ay.html' },
+	{ label: '31', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/a0041iesi8y.html' },
+	{ label: '32', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/y0041na5mgc.html' },
+	{ label: '33', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/h0041hghhvp.html' },
+	{ label: '34', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/h0041hgx8ps.html' },
+	{ label: '35', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/z0041ec0rop.html' },
+	{ label: '36', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/o00415fhnh5.html' },
+	{ label: '37', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/s0041dtk7c8.html' },
+	{ label: '38', link: 'https://v.qq.com/x/cover/mzc0020020cyvqh/p0041oidttf.html' },
+];
+
+
+// 南海归墟
+var nanhaiguixu = [{"label":"1","title":"开新地图！铁三角启程海岛冒险","link":"https://v.qq.com/x/cover/mzc00200tl9nvn9/j0047a185to.html"},{"label":"2","title":"胡八一购“鬼船”  集结新伙伴","link":"https://v.qq.com/x/cover/mzc00200tl9nvn9/r00474me0rl.html"},{"label":"3","title":"铁三角出海遇幽灵船撞击","link":"https://v.qq.com/x/cover/mzc00200tl9nvn9/d0047rwszta.html"},{"label":"4","title":"胡八一海上滑轨穿梭鬼船，铁三角操控震海炮","link":"https://v.qq.com/x/cover/mzc00200tl9nvn9/b00479iv2l9.html"},{"label":"5","title":"胡八一切换潜水模式","link":"https://v.qq.com/x/cover/mzc00200tl9nvn9/p0047ihva05.html"},{"label":"6","title":"胡八一雪莉杨变铜锅，入海涮“锅”","link":"https://v.qq.com/x/cover/mzc00200tl9nvn9/o0047g0p3gp.html"},{"label":"7","title":"阴火烧海海蛇袭击 铁三角发现恨天国遗址","link":"https://v.qq.com/x/cover/mzc00200tl9nvn9/r0047mdaqlg.html"},{"label":"8","title":"雪莉杨被偷袭，底舱“海鬼”出来了","link":"https://v.qq.com/x/cover/mzc00200tl9nvn9/j004791zjzj.html"},{"label":"9","title":"铁三角团战搏击！震撼迎接海石花，海蛇，海眼","link":"https://v.qq.com/x/cover/mzc00200tl9nvn9/r0047nzoo7a.html"},{"label":"10","title":"铁三角落入海眼 鲨鱼追咬阮黑","link":"https://v.qq.com/x/cover/mzc00200tl9nvn9/l00474r9uqz.html"},{"label":"11","title":"铁三角进入玛丽仙奴号，章鱼袭击众人","link":"https://v.qq.com/x/cover/mzc00200tl9nvn9/y0047fe4zj5.html"},{"label":"12","title":"铁三角安葬阮黑 发现恨天国遗迹","link":"https://v.qq.com/x/cover/mzc00200tl9nvn9/f0047desan9.html"},{"label":"13","title":"铁三角寻找海底生机","link":"https://v.qq.com/x/cover/mzc00200tl9nvn9/s0047mjs9yz.html"},{"label":"14","title":"胡八一遇大批食人鲛","link":"https://v.qq.com/x/cover/mzc00200tl9nvn9/x0047lfb41h.html"},{"label":"15","title":"团战鲛鲛，胡八一生死未卜","link":"https://v.qq.com/x/cover/mzc00200tl9nvn9/p00478jn3c2.html"},{"label":"16","title":"天崩地裂，铁三角如何逃出生天？","link":"https://v.qq.com/x/cover/mzc00200tl9nvn9/w0047sjm5q5.html"}];
+
+// 唐朝诡事录第一季
+var tangcaoguishilu = [{"label":1,"link":"https://www.iqiyi.com/v_nvusov4apo.html"},{"label":2,"link":"https://www.iqiyi.com/v_230c1yf16ao.html"},{"label":3,"link":"https://www.iqiyi.com/v_2dmacufkq74.html"},{"label":4,"link":"https://www.iqiyi.com/v_2cx9xr5yj20.html"},{"label":5,"link":"https://www.iqiyi.com/v_15pih2mlh14.html"},{"label":6,"link":"https://www.iqiyi.com/v_27z6y0rvw6c.html"},{"label":7,"link":"https://www.iqiyi.com/v_be64axt9wg.html"},{"label":8,"link":"https://www.iqiyi.com/v_cgi98po998.html"},{"label":9,"link":"https://www.iqiyi.com/v_25nmb424aj0.html"},{"label":10,"link":"https://www.iqiyi.com/v_xydsgxneps.html"},{"label":11,"link":"https://www.iqiyi.com/v_2bng3ny45p4.html"},{"label":12,"link":"https://www.iqiyi.com/v_2evg77uzyn0.html"},{"label":13,"link":"https://www.iqiyi.com/v_b4tqjlcq7k.html"},{"label":14,"link":"https://www.iqiyi.com/v_bl8behpkio.html"},{"label":15,"link":"https://www.iqiyi.com/v_g9bvr2rw8c.html"},{"label":16,"link":"https://www.iqiyi.com/v_wok03155ho.html"},{"label":17,"link":"https://www.iqiyi.com/v_1lymyojuzd8.html"},{"label":18,"link":"https://www.iqiyi.com/v_1tqay82xj2c.html"},{"label":19,"link":"https://www.iqiyi.com/v_f07cydw4s4.html"},{"label":20,"link":"https://www.iqiyi.com/v_20pn1zqou88.html"},{"label":21,"link":"https://www.iqiyi.com/v_14bbctdqjn8.html"},{"label":22,"link":"https://www.iqiyi.com/v_2batsx9i5og.html"},{"label":23,"link":"https://www.iqiyi.com/v_2cp7yu6976k.html"},{"label":24,"link":"https://www.iqiyi.com/v_1w7wi7yuf5c.html"},{"label":25,"link":"https://www.iqiyi.com/v_13wvkv6vljo.html"},{"label":26,"link":"https://www.iqiyi.com/v_mq3og8qy4g.html"},{"label":27,"link":"https://www.iqiyi.com/v_1ew0bnyoxb8.html"},{"label":28,"link":"https://www.iqiyi.com/v_d0ktdojd7g.html"},{"label":29,"link":"https://www.iqiyi.com/v_1e1zppnq8yg.html"},{"label":30,"link":"https://www.iqiyi.com/v_25iahuz9ico.html"},{"label":31,"link":"https://www.iqiyi.com/v_25ohm9cgjjs.html"},{"label":32,"link":"https://www.iqiyi.com/v_1z8gbpsha10.html"},{"label":33,"link":"https://www.iqiyi.com/v_1ono80gv23o.html"},{"label":34,"link":"https://www.iqiyi.com/v_i8nbcv2g2o.html"},{"label":35,"link":"https://www.iqiyi.com/v_1nfdzb2tdy4.html"},{"label":36,"link":"https://www.iqiyi.com/v_1fwy4mccr9k.html"}];
+
+// 重启之极海听雷第一季
+var chongqidiyiji = [{"label":1,"link":"https://www.iqiyi.com/v_2ffkwycne88.html"},{"label":2,"link":"https://www.iqiyi.com/v_2ffkwycn3us.html"},{"label":3,"link":"https://www.iqiyi.com/v_2ffkwycn33w.html"},{"label":4,"link":"https://www.iqiyi.com/v_2ffkwycn4wc.html"},{"label":5,"link":"https://www.iqiyi.com/v_2ffkwycn408.html"},{"label":6,"link":"https://www.iqiyi.com/v_2ffkwycn7ik.html"},{"label":7,"link":"https://www.iqiyi.com/v_19rzgzqpwk.html"},{"label":8,"link":"https://www.iqiyi.com/v_19rzgzr8ww.html"},{"label":9,"link":"https://www.iqiyi.com/v_19rzgzprmw.html"},{"label":10,"link":"https://www.iqiyi.com/v_19rzgzt8wg.html"},{"label":11,"link":"https://www.iqiyi.com/v_19rzihz2y0.html"},{"label":12,"link":"https://www.iqiyi.com/v_19rzihz5w8.html"},{"label":13,"link":"https://www.iqiyi.com/v_19rzihyyrw.html"},{"label":14,"link":"https://www.iqiyi.com/v_19rzii05i0.html"},{"label":15,"link":"https://www.iqiyi.com/v_19rz76xxvw.html"},{"label":16,"link":"https://www.iqiyi.com/v_19rz76wd0o.html"},{"label":17,"link":"https://www.iqiyi.com/v_19rz770hp0.html"},{"label":18,"link":"https://www.iqiyi.com/v_19rza11ls8.html"},{"label":19,"link":"https://www.iqiyi.com/v_1h80n5re2mw.html"},{"label":20,"link":"https://www.iqiyi.com/v_1quskf6d6ns.html"},{"label":21,"link":"https://www.iqiyi.com/v_1obsq5ztbpg.html"},{"label":22,"link":"https://www.iqiyi.com/v_1nvivnafxrg.html"},{"label":23,"link":"https://www.iqiyi.com/v_qlw2ejbfgo.html"},{"label":24,"link":"https://www.iqiyi.com/v_1g9kfcsn928.html"},{"label":25,"link":"https://www.iqiyi.com/v_171082jsmhg.html"},{"label":26,"link":"https://www.iqiyi.com/v_ghn8y8en4g.html"},{"label":27,"link":"https://www.iqiyi.com/v_m8wbhcwkco.html"},{"label":28,"link":"https://www.iqiyi.com/v_1gdcz33w6yg.html"},{"label":29,"link":"https://www.iqiyi.com/v_ko8o73qii8.html"},{"label":30,"link":"https://www.iqiyi.com/v_ptgwsde8pc.html"},{"label":31,"link":"https://www.iqiyi.com/v_exrm88j47s.html"},{"label":32,"link":"https://www.iqiyi.com/v_221d05ju04g.html"}];
+
+// 重启之极海听雷第二季
+var chongqidierji = [{"label":1,"link":"https://www.iqiyi.com/v_ulduwjfswo.html"},{"label":2,"link":"https://www.iqiyi.com/v_14a22i5bwes.html"},{"label":3,"link":"https://www.iqiyi.com/v_b9c5onm9rg.html"},{"label":4,"link":"https://www.iqiyi.com/v_17b7r1cmky0.html"},{"label":5,"link":"https://www.iqiyi.com/v_1n53v7bro5o.html"},{"label":6,"link":"https://www.iqiyi.com/v_22gkac46o08.html"},{"label":7,"link":"https://www.iqiyi.com/v_cfssndw2e0.html"},{"label":8,"link":"https://www.iqiyi.com/v_15bljro8p8g.html"},{"label":9,"link":"https://www.iqiyi.com/v_1lcgodftu84.html"},{"label":10,"link":"https://www.iqiyi.com/v_1j8qokps1ig.html"},{"label":11,"link":"https://www.iqiyi.com/v_16864657qe8.html"},{"label":12,"link":"https://www.iqiyi.com/v_1m8fdzyv2g8.html"},{"label":13,"link":"https://www.iqiyi.com/v_1280nrmcklw.html"},{"label":14,"link":"https://www.iqiyi.com/v_21eqo1rlzng.html"},{"label":15,"link":"https://www.iqiyi.com/v_1t4e2u20vxo.html"},{"label":16,"link":"https://www.iqiyi.com/v_1l745sgk7ak.html"},{"label":17,"link":"https://www.iqiyi.com/v_rv171qbp1s.html"},{"label":18,"link":"https://www.iqiyi.com/v_1jf61w50bno.html"},{"label":19,"link":"https://www.iqiyi.com/v_w51ya9dt6k.html"},{"label":20,"link":"https://www.iqiyi.com/v_1xize0cx9iw.html"},{"label":21,"link":"https://www.iqiyi.com/v_2bdcjw705p4.html"},{"label":22,"link":"https://www.iqiyi.com/v_1x8a8rguito.html"},{"label":23,"link":"https://www.iqiyi.com/v_2dvbnyco0vc.html"},{"label":24,"link":"https://www.iqiyi.com/v_u7ik3ppd6g.html"},{"label":25,"link":"https://www.iqiyi.com/v_pd4uzu7ge0.html"},{"label":26,"link":"https://www.iqiyi.com/v_1nvivn99fss.html"},{"label":27,"link":"https://www.iqiyi.com/v_19b962gurkg.html"},{"label":28,"link":"https://www.iqiyi.com/v_1fhs8p4gf0o.html"},{"label":29,"link":"https://www.iqiyi.com/v_1wbsn9xp1z8.html"},{"label":30,"link":"https://www.iqiyi.com/v_15dmaaytjvk.html"}];
+
+function render() {
+	appendPlayList('雪中悍刀行', xuezhonghandaoxing)
+	appendPlayList('南海归墟', nanhaiguixu)
+	appendPlayList('唐朝诡事录第一季', tangcaoguishilu)
+	appendPlayList('重启之极海听雷第一季', chongqidiyiji)
+	appendPlayList('重启之极海听雷第二季', chongqidierji)
+	initTooltips()
+}
+
+render();
+</script>
+
+</html>
