@@ -107,7 +107,7 @@ function playListRender(title, playList) {
 						<div class="playlist">
 						${playList.reduce((pre, cur) => (pre += `<div class="playlist-item"><a class="btn btn-light" ${
 							cur.title ? `data-bs-toggle="tooltip" data-bs-title="${cur.title}"` : ""
-						} href="${xianlu + cur.link}" target="_blank">${cur.label}</a></div>`), '')}
+						} role="button" data-bs-toggle="button" onclick="window.open('${xianlu + cur.link}', '_blank');" target="_blank">${cur.label}</a></div>`), '')}
 						</div>
 					</div>
 				</div>
