@@ -58,6 +58,9 @@ window.__NUXT__.data[1].cardData.list[0].videoinfos.map(v => ({label: v.order, l
 			height: 50px;
 			line-height: 2.3;
 		}
+		.el-button.avtive {
+			background-color: var(--el-fill-color-darker) !important;
+		}
 	</style>
 </head>
 
@@ -78,7 +81,7 @@ window.__NUXT__.data[1].cardData.list[0].videoinfos.map(v => ({label: v.order, l
 						<div class="playlist">
 							<div v-for="button in videos[title]" :key="button.label" class="playlist-item">
 								<el-tooltip effect="dark" :disabled="!button.title" :content="button.title" placement="top">
-									<el-button text bg @click="() => handleClick(title, button)">{{ button.label }}</el-button>
+									<el-button :class="{avtive: playHistory[title]==button.label}" text bg @click="() => handleClick(title, button)">{{ button.label }}</el-button>
 								</el-tooltip>
 							</div>
 						</div>
