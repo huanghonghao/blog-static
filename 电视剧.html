@@ -45,6 +45,12 @@ window.__NUXT__.data[1].cardData.list[0].videoinfos.map(v => ({label: v.order, l
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 	<script src="https://unpkg.com/element-plus"></script>
 	<style>
+		.el-header {
+			height: auto;
+		}
+		.el-container {
+			height: 100%;
+		}
 		.playlist {
 			display: flex;
 			flex-wrap: wrap;
@@ -61,33 +67,45 @@ window.__NUXT__.data[1].cardData.list[0].videoinfos.map(v => ({label: v.order, l
 		.el-button.avtive {
 			background-color: var(--el-fill-color-darker) !important;
 		}
+		iframe {
+			width: 100%;
+			height: 100%;
+			border: 0;
+		}
 	</style>
 </head>
 
 <body>
 	<div id="app">
 		<el-container>
-			<el-header>
-				<el-select v-model="xianlu" style="width: 100%">
-					<el-option v-for="item in xianlus" :key="item.value" :label="item.label" :value="item.value" />
-				</el-select>
-			</el-header>
-			<el-main>
-				<el-collapse accordion>
-					<el-collapse-item v-for="(title, index) in titles" :name="index">
-						<template #title>
-							{{title}} {{playHistory[title] && `（上次看到第${playHistory[title]}集）`}}
-						</template>
-						<div class="playlist">
-							<div v-for="button in videos[title]" :key="button.label" class="playlist-item">
-								<el-tooltip effect="dark" :disabled="!button.title" :content="button.title" placement="top">
-									<el-button :class="{avtive: playHistory[title]==button.label}" text bg @click="() => handleClick(title, button)">{{ button.label }}</el-button>
-								</el-tooltip>
+			<el-aside width="300px">
+				<el-scrollbar>
+					<el-collapse accordion>
+						<el-collapse-item v-for="(title, index) in titles" :name="index">
+							<template #title>
+								{{title}} {{playHistory[title] && `（上次看到第${playHistory[title]}集）`}}
+							</template>
+							<div class="playlist">
+								<div v-for="button in videos[title]" :key="button.label" class="playlist-item">
+									<el-tooltip effect="dark" :disabled="!button.title" :content="button.title" placement="top">
+										<el-button :class="{avtive: playHistory[title]==button.label}" text bg @click="() => handleClick(title, button)">{{ button.label }}</el-button>
+									</el-tooltip>
+								</div>
 							</div>
-						</div>
-					</el-collapse-item>
-				</el-collapse>
-			</el-main>
+						</el-collapse-item>
+					</el-collapse>
+				</el-scrollbar>
+			</el-aside>
+			<el-container>
+				<el-header>
+					<el-select v-model="xianlu" style="width: 100%">
+						<el-option v-for="item in xianlus" :key="item.value" :label="item.label" :value="item.value" />
+					</el-select>
+				</el-header>
+				<el-main>
+					<iframe :src="playUrl"></iframe>
+				</el-main>
+			</el-container>
 		</el-container>
 	</div>
 </body>
@@ -122,9 +140,11 @@ createApp({
 		const xianlu = ref(xianlus[1].value);
 		const videos = ref({});
 		const titles = computed(() => Object.keys(videos.value));
+		const playUrl = ref('');
 		const playHistory = ref(getLocal('playHistory') || {})
 		const handleClick = (title, info) => {
-			window.open(xianlu.value + info.link)
+			// window.open(xianlu.value + info.link)
+			playUrl.value = xianlu.value + info.link;
 			playHistory.value[title] = info.label;
 			setLocal('playHistory', playHistory.value)
 		}
@@ -140,7 +160,8 @@ createApp({
 			titles,
 			videos,
 			handleClick,
-			playHistory
+			playHistory,
+			playUrl
 		}
 	}
 }).use(ElementPlus).mount('#app')
