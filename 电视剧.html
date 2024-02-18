@@ -34,137 +34,179 @@ console.log(videos)
 list[0] 搜索的剧集出现在列表的位置，从0开始
 window.__NUXT__.data[1].cardData.list[0].videoinfos.map(v => ({label: v.order, link: 'https:' + v.url}))
 -->
-<html lang="zh-CN" class="at-mac at-mac-new at-unknown at-unstyle-large at-landscape at-outapp">
+<html
+  lang="zh-CN"
+  class="at-mac at-mac-new at-unknown at-unstyle-large at-landscape at-outapp"
+>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="renderer" content="webkit" />
+    <meta charset="UTF-8" />
+    <title>追剧</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/element-plus/dist/index.css"
+    />
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/element-plus"></script>
+    <style>
+      .el-header {
+        height: auto;
+      }
 
-<head>
-	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-	<meta name="renderer" content="webkit">
-	<meta charset="UTF-8">
-	<title>追剧</title>
-	<link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
-	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-	<script src="https://unpkg.com/element-plus"></script>
-	<style>
-		.el-header {
-			height: auto;
-		}
-		.el-container {
-			height: 100%;
-		}
-		.playlist {
-			display: flex;
-			flex-wrap: wrap;
-/*			justify-content: center;*/
-		}
-		.playlist-item {
-			padding: 8px;
-		}
-		.playlist-item > .el-button {
-			width: 50px;
-			height: 50px;
-			line-height: 2.3;
-		}
-		.el-button.avtive {
-			background-color: var(--el-fill-color-darker) !important;
-		}
-		iframe {
-			width: 100%;
-			height: 100%;
-			border: 0;
-		}
-	</style>
-</head>
+      .el-container {
+        height: 100%;
+      }
 
-<body>
-	<div id="app">
-		<el-container>
-			<el-aside width="300px">
-				<el-scrollbar>
-					<el-collapse accordion>
-						<el-collapse-item v-for="(title, index) in titles" :name="index">
-							<template #title>
-								{{title}} {{playHistory[title] && `（上次看到第${playHistory[title]}集）`}}
-							</template>
-							<div class="playlist">
-								<div v-for="button in videos[title]" :key="button.label" class="playlist-item">
-									<el-tooltip effect="dark" :disabled="!button.title" :content="button.title" placement="top">
-										<el-button :class="{avtive: playHistory[title]==button.label}" text bg @click="() => handleClick(title, button)">{{ button.label }}</el-button>
-									</el-tooltip>
-								</div>
-							</div>
-						</el-collapse-item>
-					</el-collapse>
-				</el-scrollbar>
-			</el-aside>
-			<el-container>
-				<el-header>
-					<el-select v-model="xianlu" style="width: 100%">
-						<el-option v-for="item in xianlus" :key="item.value" :label="item.label" :value="item.value" />
-					</el-select>
-				</el-header>
-				<el-main>
-					<iframe :src="playUrl"></iframe>
-				</el-main>
-			</el-container>
-		</el-container>
-	</div>
-</body>
-<script type="text/javascript">
-// 存储localStorage
-const setLocal = (key, value) => {
-	localStorage.setItem(key, JSON.stringify(value));
-};
+      .playlist {
+        display: flex;
+        flex-wrap: wrap;
+        /*			justify-content: center;*/
+      }
 
-// 得到localStorage
-const getLocal = (key) => {
-	return JSON.parse(localStorage.getItem(key))
-};
+      .playlist-item {
+        padding: 8px;
+      }
 
-// 删除localStorage
-const delLocal = (key) => {
-	localStorage.removeItem(key);
-};
+      .playlist-item > .el-button {
+        width: 50px;
+        height: 50px;
+        line-height: 2.3;
+      }
 
-// 清空localStorage
-const clearLocal = () => {
-	localStorage.clear();
-};
+      .el-button.avtive {
+        background-color: var(--el-fill-color-darker) !important;
+      }
 
-const { createApp, ref, computed } = Vue;
-createApp({
-	setup() {
-		const xianlus = [
-			{ label: 'playerjy', value: 'https://jx.playerjy.com/?url=' },
-			{ label: 'jsonplayer', value: 'https://jx.jsonplayer.com/player/?url=' }
-		];
-		const xianlu = ref(xianlus[1].value);
-		const videos = ref({});
-		const titles = computed(() => Object.keys(videos.value));
-		const playUrl = ref('');
-		const playHistory = ref(getLocal('playHistory') || {})
-		const handleClick = (title, info) => {
-			// window.open(xianlu.value + info.link)
-			playUrl.value = xianlu.value + info.link;
-			playHistory.value[title] = info.label;
-			setLocal('playHistory', playHistory.value)
-		}
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+	  .el-aside {
+		display: flex;
+		flex-direction: column;
+	  }
+	  .el-scrollbar {
+		flex: 1;
+		margin-top: 8px;
+	  }
+    </style>
+  </head>
 
-		fetch('https://mock.presstime.cn/mock/643442e943ff0fca8068e7be/example/videos')
-			.then(res => res.json())
-			.then(json => {
-				videos.value = json;
-			})
-		return {
-			xianlus,
-			xianlu,
-			titles,
-			videos,
-			handleClick,
-			playHistory,
-			playUrl
-		}
-	}
-}).use(ElementPlus).mount('#app')
-</script>
+  <body>
+    <div id="app">
+      <el-container>
+        <el-aside width="300px">
+          <el-select v-model="xianlu" style="width: 100%">
+            <el-option
+              v-for="item in xianlus"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+          <el-scrollbar>
+            <el-collapse accordion>
+              <el-collapse-item v-for="(title, index) in titles" :name="index">
+                <template #title>
+                  {{title}} {{playHistory[title] &&
+                  `（上次看到第${playHistory[title]}集）`}}
+                </template>
+                <div class="playlist">
+                  <div
+                    v-for="button in videos[title]"
+                    :key="button.label"
+                    class="playlist-item"
+                  >
+                    <el-tooltip
+                      effect="dark"
+                      :disabled="!button.title"
+                      :content="button.title"
+                      placement="top"
+                    >
+                      <el-button
+                        :class="{avtive: playHistory[title]==button.label}"
+                        text
+                        bg
+                        @click="() => handleClick(title, button)"
+                        >{{ button.label }}</el-button
+                      >
+                    </el-tooltip>
+                  </div>
+                </div>
+              </el-collapse-item>
+            </el-collapse>
+          </el-scrollbar>
+        </el-aside>
+        <el-main>
+          <iframe :src="playUrl"></iframe>
+        </el-main>
+      </el-container>
+    </div>
+  </body>
+  <script type="text/javascript">
+    // 存储localStorage
+    const setLocal = (key, value) => {
+      localStorage.setItem(key, JSON.stringify(value));
+    };
 
+    // 得到localStorage
+    const getLocal = (key) => {
+      return JSON.parse(localStorage.getItem(key));
+    };
+
+    // 删除localStorage
+    const delLocal = (key) => {
+      localStorage.removeItem(key);
+    };
+
+    // 清空localStorage
+    const clearLocal = () => {
+      localStorage.clear();
+    };
+
+    const { createApp, ref, computed } = Vue;
+    createApp({
+      setup() {
+        const xianlus = [
+          { label: "playerjy", value: "https://jx.playerjy.com/?url=" },
+          {
+            label: "jsonplayer",
+            value: "https://jx.jsonplayer.com/player/?url=",
+          },
+        ];
+        const xianlu = ref(xianlus[1].value);
+        const videos = ref({});
+        const titles = computed(() => Object.keys(videos.value));
+        const playUrl = ref("");
+        const playHistory = ref(getLocal("playHistory") || {});
+        const handleClick = (title, info) => {
+          // window.open(xianlu.value + info.link)
+          playUrl.value = xianlu.value + info.link;
+          playHistory.value[title] = info.label;
+          setLocal("playHistory", playHistory.value);
+        };
+
+        fetch(
+          "https://mock.presstime.cn/mock/643442e943ff0fca8068e7be/example/videos"
+        )
+          .then((res) => res.json())
+          .then((json) => {
+            videos.value = json;
+          });
+        return {
+          xianlus,
+          xianlu,
+          titles,
+          videos,
+          handleClick,
+          playHistory,
+          playUrl,
+        };
+      },
+    })
+      .use(ElementPlus)
+      .mount("#app");
+  </script>
 </html>
