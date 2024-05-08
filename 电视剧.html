@@ -1,7 +1,7 @@
 <!--
 本页面使用bootstrap搭建，官方文档：https://getbootstrap.com/docs/5.3/components/tooltips/
 
-腾讯视频连接获取：
+=========== 腾讯视频连接获取 ============
 脚本一：
 随便一个播放页面执行
 var videos = [];
@@ -28,11 +28,21 @@ document.querySelectorAll('div.page-content__right div.playlist-list div.playlis
 JSON.stringify(videos)
 console.log(videos)
 
-爱奇艺视频连接获取：
+=============== 爱奇艺视频连接获取 ==============
 搜索页面执行
 参数说明：
 list[0] 搜索的剧集出现在列表的位置，从0开始
 window.__NUXT__.data[1].cardData.list[0].videoinfos.map(v => ({label: v.order, link: 'https:' + v.url}))
+
+=============== 优酷 ================
+var index = 2;
+var videos = [];
+document.querySelectorAll('div[data-spm^="PhoneSokuProgram_' + index + '"] div[class^="box-wrap"] a').forEach(a => {
+    var num = a.querySelector('span[class^="label-text"]').innerText;
+    videos.push({label: num, link: a.href});
+})
+JSON.stringify(videos)
+console.log(videos)
 -->
 <html
   lang="zh-CN"
@@ -140,7 +150,7 @@ window.__NUXT__.data[1].cardData.list[0].videoinfos.map(v => ({label: v.order, l
           </el-scrollbar>
         </el-aside>
         <el-main>
-          <iframe :src="playUrl"></iframe>
+          <iframe :src="playUrl" frameborder="0" border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="true" allowfullscreen="true"></iframe>
         </el-main>
       </el-container>
     </div>
