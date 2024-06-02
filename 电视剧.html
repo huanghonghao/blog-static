@@ -60,6 +60,9 @@ console.log(videos)
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/element-plus"></script>
     <style>
+      body {
+        margin: 0;
+      }
       .el-header {
         height: auto;
       }
@@ -69,9 +72,12 @@ console.log(videos)
       }
 
       .playlist {
-        display: flex;
-        flex-wrap: wrap;
+        /* display: flex; */
+        /* flex-wrap: wrap; */
         /*			justify-content: center;*/
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 75px);
+        justify-items: center;
       }
 
       .playlist-item {
@@ -93,14 +99,15 @@ console.log(videos)
         height: 100%;
         border: 0;
       }
-	  .el-aside {
-		display: flex;
-		flex-direction: column;
-	  }
-	  .el-scrollbar {
-		flex: 1;
-		margin-top: 8px;
-	  }
+      .el-aside {
+        display: flex;
+        flex-direction: column;
+        margin: 8px;
+      }
+      .el-scrollbar {
+        flex: 1;
+        margin-top: 8px;
+      }
     </style>
   </head>
 
@@ -108,7 +115,7 @@ console.log(videos)
     <div id="app">
       <el-container>
         <el-aside width="300px">
-          <el-select v-model="xianlu" style="width: 100%">
+          <el-select v-model="xianlu" @change="handleXianLuChange" style="width: 100%">
             <el-option
               v-for="item in xianlus"
               :key="item.value"
@@ -149,8 +156,17 @@ console.log(videos)
             </el-collapse>
           </el-scrollbar>
         </el-aside>
-        <el-main>
-          <iframe :src="playUrl" frameborder="0" border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="true" allowfullscreen="true"></iframe>
+        <el-main style="padding: 0;">
+          <iframe
+            :src="playUrl"
+            frameborder="0"
+            border="0"
+            marginwidth="0"
+            marginheight="0"
+            scrolling="no"
+            allowtransparency="true"
+            allowfullscreen="true"
+          ></iframe>
         </el-main>
       </el-container>
     </div>
@@ -186,11 +202,21 @@ console.log(videos)
             value: "https://jx.jsonplayer.com/player/?url=",
           },
         ];
-        const xianlu = ref(xianlus[1].value);
+        const xianlu = ref(getLocal('xianlu') ?? xianlus[1].value);
         const videos = ref({});
         const titles = computed(() => Object.keys(videos.value));
         const playUrl = ref("");
         const playHistory = ref(getLocal("playHistory") || {});
+
+        const handleXianLuChange = value => {
+          setLocal('xianlu', value);
+          if (!playUrl.value) {
+            return;
+          }
+          const vUrl = playUrl.value.substr(playUrl.value.indexOf('http', 5));
+          playUrl.value = value + vUrl;
+        };
+
         const handleClick = (title, info) => {
           // window.open(xianlu.value + info.link)
           playUrl.value = xianlu.value + info.link;
@@ -211,6 +237,7 @@ console.log(videos)
           titles,
           videos,
           handleClick,
+          handleXianLuChange,
           playHistory,
           playUrl,
         };
